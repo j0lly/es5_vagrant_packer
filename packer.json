@@ -1,0 +1,41 @@
+{
+  "variables": {
+    "os": "amzlinux",
+    "user": "ec2-user"
+  },
+  "builders": [{
+    "type": "amazon-ebs",
+    "region": "eu-west-1",
+    "source_ami": "ami-c51e3eb6",
+    "instance_type": "t2.micro",
+    "ssh_username": "{{ user `user`}}",
+    "ami_name": "packer-ES5 {{timestamp}}"
+  }],
+  "provisioners": [
+    {
+        "type": "file",
+        "source": "scripts",
+        "destination": "/tmp"
+    },
+    {
+        "type": "file",
+        "source": "puppet/hieradata",
+        "destination": "/tmp"
+    },
+    {
+        "type": "shell",
+        "script": "bootstrap.sh",
+        "environment_vars": [
+          "OS={{ user `os`}}"
+    ]
+    },
+    {
+        "type": "puppet-masterless",
+        "manifest_file": "puppet/manifests",
+        "hiera_config_path": "puppet/hiera.yaml",
+        "module_paths": ["puppet/modules"],
+        "extra_arguments": ["--verbose", "--debug"],
+        "execute_command": "{{.FacterVars}}{{if .Sudo}} sudo -E {{end}}puppet apply --modulepath='{{.ModulePath}}:/etc/puppet/modules' {{if ne .HieraConfigPath \"\"}}--hiera_config='{{.HieraConfigPath}}' {{end}} {{if ne .ManifestDir \"\"}}--manifestdir='{{.ManifestDir}}' {{end}} --detailed-exitcodes {{.ManifestFile}} --verbose --debug"
+    }
+  ]
+}

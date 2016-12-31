@@ -1,8 +1,6 @@
-$instances = hiera_hash('elasticsearch_instances')
 
 # make elasticserach instance
 include elasticsearch
-create_resources('::elasticsearch::instance', $instances)
-
+elasticsearch::instance { 'node01': }
 # install basic monitoring
 include base_monitor

@@ -1,0 +1,24 @@
+---
+my_message: 'Hello, World!'
+
+elasticsearch::autoupgrade: true
+elasticsearch::manage_repo: true
+elasticsearch::repo_version: '5.x'
+elasticsearch::java_install: true
+elasticsearch::restart_on_change: true
+elasticsearch::config:
+            bootstrap:
+                memory_lock: true
+            http:
+                host:
+                - _site_
+                - _local_
+            cluster:
+                name: 'logstash'
+            node:
+                name: 'node01'
+elasticsearch::init_defaults:
+            MAX_OPEN_FILES: 65535
+            MAX_LOCKED_MEMORY: 'unlimited'
+            MAX_MAP_COUNT: 262144
+            ES_JAVA_OPTS: '"-Xms128m -Xmx128m"'

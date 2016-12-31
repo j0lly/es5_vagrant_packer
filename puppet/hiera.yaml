@@ -2,8 +2,9 @@
 :backends:
       - yaml
 :yaml:
-    :datadir: "%{settings::manifestdir}/hieradata"
+    :datadir: "/tmp/hieradata"
 
 :hierarchy:
+      - "%{osfamily}"
       - "common"
 
